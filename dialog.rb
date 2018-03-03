@@ -69,6 +69,11 @@ class Dialog
     puts "Введите название станции"
     station_name = gets.chomp
     @stations << Station.new(station_name)
+    puts "Создана станция. Название: #{station_name}"
+    rescue
+      puts $!
+      puts "Объект не создан."
+      station_input
   end
 
   def station_list
@@ -77,7 +82,6 @@ class Dialog
   end
 
   def add_train
-    begin
       puts "Введите название поезда. Русские буквы, первая - заглавная"
       name = gets.chomp
       puts "Введите номер поезда. Формат: 3 цифры или буквы, необязательный дефис, 2 цифры или буквы"
@@ -91,13 +95,13 @@ class Dialog
         @trains << CargoTrain.new(name, number)
         print_type = "Грузовой"
       else
-        raise
+        @trains << Train.new(name, type, number)
       end
       puts "Создан поезд. Название: #{name}. Тип: #{print_type}; Номер: #{number}"
     rescue
+      puts $!
       puts "Объект не создан."
       add_train
-    end
   end
 
   def add_route
@@ -108,6 +112,11 @@ class Dialog
     puts "Введите номер конечной станции из списка станций"
     terminate = gets.to_i
     @routes[id] = Route.new(@stations[start], @stations[terminate])
+    puts "Создан маршрут. Номер: #{id}: #{@stations[start].name} - #{@stations[terminate].name}"
+    rescue
+      puts $!
+      puts "Объект не создан."
+      add_route
   end
 
   def route_list

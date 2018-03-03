@@ -17,13 +17,14 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
+    validate!
     @@stations << self
     register_instance
-    validate!
   end
 
   def valid?
     validate!
+    true
   rescue
     false
   end
@@ -44,7 +45,6 @@ class Station
 
   def validate!
     raise "Name can't be nil" if name.nil?
-    raise "Number has invalid format" if name !~ NAME_FORMAT
-    true
+    raise "Name has invalid format" if name !~ NAME_FORMAT
   end
 end

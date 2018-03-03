@@ -10,12 +10,13 @@ class Route
 
   def initialize(start, terminate)
     @stations = [start, terminate]
-    register_instance
     validate!
+    register_instance
   end
   
   def valid?
     validate!
+    true
   rescue
     false
   end
@@ -40,8 +41,7 @@ class Route
   def validate!
     raise "Start can't be nil" if start.nil?
     raise "Terminate can't be nil" if terminate.nil?
-    raise "Start has invalid format" if start.class != Station
-    raise "Terminate has invalid format" if terminate.class != Station
-    true
+    raise "Start has invalid format" unless start.is_a?( Station ) 
+    raise "Terminate has invalid format" unless terminate.is_a?( Station )
   end
 end

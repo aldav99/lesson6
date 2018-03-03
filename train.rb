@@ -16,7 +16,7 @@ class Train
   include ModuleVendor
   attr_reader :name, :type, :speed, :number
   
-  NUMBER_FORMAT = /^[a-zа-я0-9]{3}-?[a-zа-я0-9]{2}$/i
+  NUMBER_FORMAT = /^[a-zа-я\d]{3}-?[a-zа-я\d]{2}$/i
   NAME_FORMAT = /^[А-Я]{1}[а-я]*$/
 
   def initialize(name, type, wagons = [], route = [], number)
@@ -26,13 +26,14 @@ class Train
     @speed = 0
     @route = route
     @number = number
+    validate!
     @@trains[number] = self
     register_instance
-    validate!
   end
 
   def valid?
     validate!
+    true
   rescue
     false
   end
@@ -98,7 +99,7 @@ class Train
   def validate!
     raise "Name can't be nil" if name.nil?
     raise "Name can't be nil" if number.nil?
-    raise "Type has invalide value" if not([:passenger, :cargo].include?(type))
+    raise "Type has invalide value" unless [:passenger, :cargo].include?(type)
     raise "Name has invalid format" if name !~ NAME_FORMAT
     raise "Number has invalid format" if number !~ NUMBER_FORMAT
     true
