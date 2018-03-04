@@ -70,10 +70,10 @@ class Dialog
     station_name = gets.chomp
     @stations << Station.new(station_name)
     puts "Создана станция. Название: #{station_name}"
-    rescue
-      puts $!
-      puts "Объект не создан."
-      station_input
+  rescue => e
+    puts e.message
+    puts "Объект не создан."
+    station_input
   end
 
   def station_list
@@ -82,26 +82,26 @@ class Dialog
   end
 
   def add_train
-      puts "Введите название поезда. Русские буквы, первая - заглавная"
-      name = gets.chomp
-      puts "Введите номер поезда. Формат: 3 цифры или буквы, необязательный дефис, 2 цифры или буквы"
-      number = gets.chomp
-      puts "Введите тип поезда (1 - Пассажирский или 2 - Грузовой)"
-      type = gets.to_i
-      if type == 1
-        @trains << PassengerTrain.new(name, number)
-        print_type = "Пассажирский"
-      elsif type == 2
-        @trains << CargoTrain.new(name, number)
-        print_type = "Грузовой"
-      else
-        @trains << Train.new(name, type, number)
-      end
-      puts "Создан поезд. Название: #{name}. Тип: #{print_type}; Номер: #{number}"
-    rescue
-      puts $!
-      puts "Объект не создан."
-      add_train
+    puts "Введите название поезда. Русские буквы, первая - заглавная"
+    name = gets.chomp
+    puts "Введите номер поезда. Формат: 3 цифры или буквы, необязательный дефис, 2 цифры или буквы"
+    number = gets.chomp
+    puts "Введите тип поезда (1 - Пассажирский или 2 - Грузовой)"
+    type = gets.to_i
+    if type == 1
+      @trains << PassengerTrain.new(name, number)
+      print_type = "Пассажирский"
+    elsif type == 2
+      @trains << CargoTrain.new(name, number)
+      print_type = "Грузовой"
+    else
+      @trains << Train.new(name, type, number)
+    end
+    puts "Создан поезд. Название: #{name}. Тип: #{print_type}; Номер: #{number}"
+  rescue => e
+    puts e.message
+    puts "Объект не создан."
+    add_train
   end
 
   def add_route
@@ -113,10 +113,10 @@ class Dialog
     terminate = gets.to_i
     @routes[id] = Route.new(@stations[start], @stations[terminate])
     puts "Создан маршрут. Номер: #{id}: #{@stations[start].name} - #{@stations[terminate].name}"
-    rescue
-      puts $!
-      puts "Объект не создан."
-      add_route
+  rescue => e
+    puts e.message
+    puts "Объект не создан."
+    add_route
   end
 
   def route_list
