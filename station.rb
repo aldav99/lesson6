@@ -22,6 +22,12 @@ class Station
     register_instance
   end
 
+  def train_to_block(&block)
+    @trains.each do |train| 
+      yield(train)
+    end
+  end
+
   def valid?
     validate!
     true

@@ -31,6 +31,12 @@ class Train
     register_instance
   end
 
+  def wagon_to_block(&block)
+    @wagons.each do |wagon| 
+      yield(wagon)
+    end
+  end
+
   def valid?
     validate!
     true

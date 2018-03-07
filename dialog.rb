@@ -23,7 +23,10 @@ class Dialog
       puts "-- Введите 11 'поезд назад' для продвижения поезда назад на одну станцию."
       puts "-- Введите 12 'добавить вагон' для добавления вагона к поезду."
       puts "-- Введите 13 'отцепить вагон' для отцепления вагона от поезда."
-      puts "-- Введите 14 'стоп' для выхода из программы."
+      puts "-- Введите 14 'список вагонов у поезда'"
+      puts "-- Введите 15 'занимать место или объем в вагоне'"
+
+      puts "-- Введите 20 'стоп' для выхода из программы."
 
       choice = gets.to_i
 
@@ -56,6 +59,10 @@ class Dialog
         when 13
           del_wagon
         when 14
+          list_wagon
+        when 15
+          occupy_wagon
+        when 20
           break
         else
           puts "Error!"
@@ -165,7 +172,12 @@ class Dialog
     puts "Введите номер станции из списка станций"
     station_index = gets.to_i
     station = @stations[station_index]
-    station.trains.each {|train| puts train.name } 
+    station.trains.each do |train| 
+      puts "Имя поезда:  #{train.name}"
+      puts "Тип: #{train.type}"
+      puts "Номер: #{train.number}"
+      puts "Количество вагонов:#{train.wagons.length}"
+    end
   end
 
   def train_from_list
@@ -173,37 +185,71 @@ class Dialog
     trains_content(@trains)
     puts
     name = gets.chomp
+    @trains.find { |train| train.name == name }
   end
 
   def train_move_forward
-    train_name = train_from_list
-    train = @trains.find { |train| train.name == train_name }
+    train = train_from_list
     train.go_forward
   end
 
   def train_move_back
-    train_name = train_from_list
-    train = @trains.find { |train| train.name == train_name }
+    train = train_from_list
     train.go_back
   end
 
   def add_wagon
-    train_name = train_from_list
-    train = @trains.find { |train| train.name == train_name }
+    train = train_from_list
     if train.type == :passenger 
-      pw = PassengerWagon.new
+      puts "Введите количество пассажиромест"
+      places = gets.to_i
+      pw = PassengerWagon.new(places)
       train.attach_wagon(pw)
       puts train.wagons.size
     else
-      cw = CargoWagon.new
+      puts "Введите общий объем"
+      value = gets.to_i
+      cw = CargoWagon.new(value)
       train.attach_wagon(cw)
       puts train.wagons.size
     end
   end
 
+  def list_wagon
+    train = train_from_list
+    puts "Имя поезда:  #{train.name}"
+    puts "Количество вагонов:#{train.wagons.length}"
+    train.wagons.each do |wagon|
+      puts "++++++++ВАГОНЫ+++++++++++++"
+      puts "Номер вагона: #{wagon.number}"
+      puts "Тип вагона: #{wagon.type}"
+      if wagon.type == :cargo
+        puts "Свободный объем: #{wagon.value}; Занятый объем: #{wagon.occupied}"
+      else
+        puts "Свободные места: #{wagon.places}; Занятые места: #{wagon.occupied}"
+      end
+    end
+  end
+
+  def occupy_wagon
+    train = train_from_list
+    puts "Выберите вагон из списка"
+    list_wagon
+    number = gets.to_i
+    wagon = train.wagons.find { |wagon| wagon.number == number }
+    if wagon.type == :cargo
+        puts "Введите занимаемый объем"
+        value = gets.to_i
+        wagon.take_a_value(value)
+    else
+        puts "Будет занято одно пассажироместо"
+        wagon.take_a_places
+    end
+  end
+
+
   def del_wagon
-    train_name = train_from_list
-    train = @trains.find { |train| train.name == train_name }
+    train = train_from_list
     train.deattach_wagon
     puts train.wagons.size
   end
