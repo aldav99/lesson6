@@ -22,9 +22,9 @@ class Station
     register_instance
   end
 
-  def train_to_block(&block)
+  def each_train(&block)
     @trains.each do |train| 
-      yield(train)
+      block.call train
     end
   end
 

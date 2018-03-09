@@ -27,16 +27,16 @@ tr2.route=(r1)
 tr3 = Train.new("Третий",:cargo, "500-03")
 tr3.route=(r1)
 
-pb.train_to_block {|train| puts "#{train.name}" }
+pb.each_train {|train| puts "#{train.name}" }
 
 cw1 = CargoWagon.new(1000)
-puts "Было в 1 вагоне #{cw1.value}"
+puts "Было в 1 вагоне #{cw1.volume}"
 cw2 = CargoWagon.new(1500)
-puts "Было в 2 вагоне #{cw2.value}"
-cw1.take_a_value(800)
-puts "Стало в 1 вагоне #{cw1.value}"
+puts "Было в 2 вагоне #{cw2.volume}"
+cw1.take_a_volume(800)
+puts "Стало в 1 вагоне #{cw1.volume}"
 puts "Занято в 1 вагоне #{cw1.occupied}"
-puts "Стало в 2 вагоне #{cw2.value}"
+puts "Стало в 2 вагоне #{cw2.volume}"
 puts "Занято в 2 вагоне #{cw2.occupied}"
 
 puts "++++++++++++++++++++++++++++++++++++++++"
@@ -66,24 +66,19 @@ tr2.go_forward
 puts "++++++++станции+++++++++++++"
 Station.all.each do  |station| 
   puts "Название станции:  #{station.name}" unless station.trains == []
-  station.train_to_block do |train|
-    puts "++++++++ПОЕЗДА+++++++++++++"
-    puts "Имя поезда:  #{train.name}"
-    puts "Тип: #{train.type}"
-    puts "Номер: #{train.number}"
-    puts "Количество вагонов:#{train.wagons.length}"
-    train.wagons.each do |wagon|
-      puts "++++++++ВАГОНЫ+++++++++++++"
-      puts "Номер вагона: #{wagon.number}"
-      puts "Тип вагона: #{wagon.type}"
-      if wagon.type == :cargo
-        puts "Свободный объем: #{wagon.value}; Занятый объем: #{wagon.occupied}"
-      else
-        puts "Свободные места: #{wagon.places}; Занятые места: #{wagon.occupied}"
-      end
-    end
+  station.each_train do |train|
+    puts train
+    train.each_wagon { |wagon| puts wagon }
   end
 end
+ 
+  puts "++++++++station.train_to_block +++++++++++++"
+pb.each_train{|train| puts train}
+dp.each_train{|train| puts train}
+
+
+
+
 
 
 

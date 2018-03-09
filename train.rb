@@ -31,9 +31,9 @@ class Train
     register_instance
   end
 
-  def wagon_to_block(&block)
+  def each_wagon(&block)
     @wagons.each do |wagon| 
-      yield(wagon)
+      block.call wagon
     end
   end
 
@@ -42,6 +42,10 @@ class Train
     true
   rescue
     false
+  end
+
+  def to_s
+    "Имя поезда:  #@name. Тип: #@type. Номер: #@number. Количество вагонов:#{wagons.length}"
   end
 
   def change_speed(speed_delta)

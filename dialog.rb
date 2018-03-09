@@ -172,12 +172,7 @@ class Dialog
     puts "Введите номер станции из списка станций"
     station_index = gets.to_i
     station = @stations[station_index]
-    station.trains.each do |train| 
-      puts "Имя поезда:  #{train.name}"
-      puts "Тип: #{train.type}"
-      puts "Номер: #{train.number}"
-      puts "Количество вагонов:#{train.wagons.length}"
-    end
+    station.each_train{|train| puts train}
   end
 
   def train_from_list
@@ -208,8 +203,8 @@ class Dialog
       puts train.wagons.size
     else
       puts "Введите общий объем"
-      value = gets.to_i
-      cw = CargoWagon.new(value)
+      volume = gets.to_f
+      cw = CargoWagon.new(volume)
       train.attach_wagon(cw)
       puts train.wagons.size
     end
@@ -219,16 +214,7 @@ class Dialog
     train = train_from_list
     puts "Имя поезда:  #{train.name}"
     puts "Количество вагонов:#{train.wagons.length}"
-    train.wagons.each do |wagon|
-      puts "++++++++ВАГОНЫ+++++++++++++"
-      puts "Номер вагона: #{wagon.number}"
-      puts "Тип вагона: #{wagon.type}"
-      if wagon.type == :cargo
-        puts "Свободный объем: #{wagon.value}; Занятый объем: #{wagon.occupied}"
-      else
-        puts "Свободные места: #{wagon.places}; Занятые места: #{wagon.occupied}"
-      end
-    end
+    train.each_wagon { |wagon| puts wagon }
   end
 
   def occupy_wagon
@@ -238,12 +224,12 @@ class Dialog
     number = gets.to_i
     wagon = train.wagons.find { |wagon| wagon.number == number }
     if wagon.type == :cargo
-        puts "Введите занимаемый объем"
-        value = gets.to_i
-        wagon.take_a_value(value)
+      puts "Введите занимаемый объем"
+      volume = gets.to_f
+      wagon.take_a_volume(volume)
     else
-        puts "Будет занято одно пассажироместо"
-        wagon.take_a_places
+      puts "Будет занято одно пассажироместо"
+      wagon.take_a_places
     end
   end
 
