@@ -1,7 +1,6 @@
 require_relative 'module_vendor'
 
 class Wagon
-
   include ModuleVendor
 
   def number

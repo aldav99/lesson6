@@ -11,5 +11,5 @@ require_relative 'passenger_wagon'
 
 require_relative 'dialog'
 
-new_dialog = Dialog.new()
+new_dialog = Dialog.new
 new_dialog.output

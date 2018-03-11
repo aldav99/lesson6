@@ -4,22 +4,23 @@ require_relative 'module_vendor'
 require_relative 'instance_counter'
 
 class Train
+  include InstanceCounter
 
-  include InstanceCounter 
-   
-  @@trains = {}
+  def self.trains
+    @trains ||= {}
+  end
 
   def self.find(number)
-    @@trains[number]
+    trains[number]
   end
 
   include ModuleVendor
   attr_reader :name, :type, :speed, :number
-  
+
   NUMBER_FORMAT = /^[a-zа-я\d]{3}-?[a-zа-я\d]{2}$/i
   NAME_FORMAT = /^[А-Я]{1}[а-я]*$/
 
-  def initialize(name, type, wagons = [], route = [], number)
+  def initialize(name, type, number, wagons = [], route = [])
     @name = name
     @type = type
     @wagons = wagons
@@ -27,47 +28,49 @@ class Train
     @route = route
     @number = number
     validate!
-    @@trains[number] = self
+    Train.trains[number] = self
     register_instance
   end
 
-  def each_wagon(&block)
-    @wagons.each do |wagon| 
-      block.call wagon
+  def each_wagon
+    @wagons.each do |wagon|
+      yield wagon
     end
   end
 
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
   def to_s
-    "Имя поезда:  #@name. Тип: #@type. Номер: #@number. Количество вагонов:#{wagons.length}"
+    name = "Имя поезда:  #{@name}."
+    type = " Тип: #{@type}."
+    number = " Номер: #{@number}."
+    length_train = " Количество вагонов:#{wagons.length}"
+    name + type + number + length_train
   end
 
   def change_speed(speed_delta)
     @speed = [@speed + speed_delta, 0].max
   end
 
-  def wagons
-    @wagons 
-  end
+  attr_reader :wagons
 
   def stop
     @speed = 0
   end
 
   def attach_wagon(wagon)
-    return if self.speed > 0
-    return if self.type != wagon.type
+    return if speed > 0
+    return if type != wagon.type
     @wagons << wagon
   end
 
   def deattach_wagon
-    @wagons.pop if @speed == 0
+    @wagons.pop if @speed.zero?
   end
 
   def route=(route)
@@ -93,7 +96,7 @@ class Train
   def current_station
     @route.stations[@index_location]
   end
-  
+
   def back_station
     return if current_station == @route.start
     @route.stations[@index_location - 1]
@@ -107,11 +110,10 @@ class Train
   protected
 
   def validate!
-    raise "Name can't be nil" if name.nil?
-    raise "Name can't be nil" if number.nil?
-    raise "Type has invalide value" unless [:passenger, :cargo].include?(type)
-    raise "Name has invalid format" if name !~ NAME_FORMAT
-    raise "Number has invalid format" if number !~ NUMBER_FORMAT
+    raise "Name or number can't be nil" if name.nil? || number.nil?
+    raise 'Type has invalide value' unless %i[passenger cargo].include?(type)
+    raise 'Name has invalid format' if name !~ NAME_FORMAT
+    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
     true
   end
-end  
+end

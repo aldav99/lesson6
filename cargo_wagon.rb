@@ -1,34 +1,33 @@
 require_relative 'wagon'
 
 class CargoWagon < Wagon
-  
   def initialize(volume)
-    @volume = volume
-    @max_volume = volume 
-    # @max_volume - переменная для сохранения начального объема вагона
-    # Это промежуточная переменная для вычисления ЗАНЯТОГО объема.
+    @free_volume = volume
+    @total_volume = volume
   end
 
-  attr_reader :volume
+  attr_reader :free_volume
 
-  def type 
+  def type
     :cargo
   end
-  
+
   def take_a_volume(volume)
-    self.volume = [self.volume - volume, 0].max
+    self.free_volume = [free_volume - volume, 0].max
   end
 
   def to_s
-    "Номер вагона: #{self.number}. Тип вагона: #{self.type}. Свободный объем: #{self.volume}. Занятый объем: #{self.occupied}."
+    wagon_date_output = "Номер вагона: #{number}. Тип вагона: #{type}."
+    volume_free_output = "Свободный объем: #{free_volume}."
+    volume_occupied_output = " Занятый объем: #{occupied}."
+    wagon_date_output + volume_free_output + volume_occupied_output
   end
-  
+
   def occupied
-    @max_volume - self.volume
+    @total_volume - free_volume
   end
 
   protected
 
-  attr_writer :volume
-
+  attr_writer :free_volume
 end

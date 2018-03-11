@@ -1,8 +1,7 @@
 require_relative 'train'
 
 class CargoTrain < Train
-
-  def initialize(name, wagons = [], route = [], number)
-    super(name, :cargo, wagons, route, number)
+  def initialize(name, number, wagons = [], _route = [])
+    super(name, :cargo, number, wagons)
   end
 end

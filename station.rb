@@ -1,37 +1,38 @@
 require_relative 'instance_counter'
 
 class Station
-
-  include InstanceCounter 
+  include InstanceCounter
 
   NAME_FORMAT = /^[А-Я]{1}[а-я]*$/
 
-  @@stations = []
+  def self.stations
+    @stations ||= []
+  end
 
   def self.all
-    @@stations
+    stations
   end
 
   attr_reader :name, :trains
-  
+
   def initialize(name)
     @name = name
     @trains = []
     validate!
-    @@stations << self
+    Station.stations << self
     register_instance
   end
 
-  def each_train(&block)
-    @trains.each do |train| 
-      block.call train
+  def each_train
+    @trains.each do |train|
+      yield train
     end
   end
 
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -44,13 +45,13 @@ class Station
   end
 
   def list_by_type(type)
-    self.trains.select { |train| train.type == type }
+    trains.select { |train| train.type == type }
   end
 
   protected
 
   def validate!
     raise "Name can't be nil" if name.nil?
-    raise "Name has invalid format" if name !~ NAME_FORMAT
+    raise 'Name has invalid format' if name !~ NAME_FORMAT
   end
 end
