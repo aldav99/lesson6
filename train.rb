@@ -2,9 +2,13 @@ require_relative 'station'
 require_relative 'route'
 require_relative 'module_vendor'
 require_relative 'instance_counter'
+require_relative 'validation'
+require_relative 'acessors'
 
 class Train
   include InstanceCounter
+  include Validation
+  include Acessors
 
   def self.trains
     @trains ||= {}
@@ -22,12 +26,15 @@ class Train
 
   def initialize(name, type, number, wagons = [], route = [])
     @name = name
+    validate! :name, :presence
+    validate! :name, :format, NAME_FORMAT
     @type = type
     @wagons = wagons
     @speed = 0
     @route = route
     @number = number
-    validate!
+    validate! :number, :presence
+    validate! :number, :format, NUMBER_FORMAT
     Train.trains[number] = self
     register_instance
   end
@@ -36,13 +43,6 @@ class Train
     @wagons.each do |wagon|
       yield wagon
     end
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def to_s
@@ -105,15 +105,5 @@ class Train
   def next_station
     return if current_station == @route.terminate
     @route.stations[@index_location + 1]
-  end
-
-  protected
-
-  def validate!
-    raise "Name or number can't be nil" if name.nil? || number.nil?
-    raise 'Type has invalide value' unless %i[passenger cargo].include?(type)
-    raise 'Name has invalid format' if name !~ NAME_FORMAT
-    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
-    true
   end
 end

@@ -34,8 +34,7 @@ module DialogTrain
 
   def add_train
     create_train
-  rescue StandardError => e
-    puts e.message
+  rescue 
     puts 'Объект не создан.'
     add_train
   end

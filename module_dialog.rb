@@ -9,8 +9,7 @@ module ModuleDialog
     station_name = gets.chomp
     @stations << Station.new(station_name)
     puts "Создана станция. Название: #{station_name}"
-  rescue StandardError => e
-    puts e.message
+  rescue StandardError
     puts 'Объект не создан.'
     station_input
   end
@@ -34,8 +33,7 @@ module ModuleDialog
     id, start, terminate = select_station_for_add
     @routes[id] = Route.new(@stations[start], @stations[terminate])
     puts "Маршрут:#{id} #{@stations[start].name}-#{@stations[terminate].name}"
-  rescue StandardError => e
-    puts e.message
+  rescue StandardError 
     puts 'Объект не создан.'
     add_route
   end

@@ -1,7 +1,11 @@
 require_relative 'instance_counter'
+require_relative 'validation'
+require_relative 'acessors'
 
 class Station
   include InstanceCounter
+  include Validation
+  include Acessors
 
   NAME_FORMAT = /^[А-Я]{1}[а-я]*$/
 
@@ -18,7 +22,8 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
-    validate!
+    validate! :name, :presence
+    validate! :name, :format, NAME_FORMAT 
     Station.stations << self
     register_instance
   end
@@ -27,13 +32,6 @@ class Station
     @trains.each do |train|
       yield train
     end
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def add_train(train)
@@ -46,12 +44,5 @@ class Station
 
   def list_by_type(type)
     trains.select { |train| train.type == type }
-  end
-
-  protected
-
-  def validate!
-    raise "Name can't be nil" if name.nil?
-    raise 'Name has invalid format' if name !~ NAME_FORMAT
   end
 end
