@@ -5,7 +5,7 @@ require_relative 'acessors'
 class Route
   include InstanceCounter
   include Validation
-  include Acessors
+  extend Acessors
 
 
   attr_reader :stations, :start, :terminate
@@ -14,11 +14,21 @@ class Route
     @stations = [start, terminate]
     @start = start
     @terminate = terminate
-    validate! :start, :presence 
-    validate! :terminate, :presence 
-    validate! :start, :type, Station 
-    validate! :terminate, :type, Station 
+    validate!
     register_instance
+  end
+
+  def prove
+    [
+    [:start, :presence],
+    [:terminate, :presence],
+    [:start, :type, Station],
+    [:terminate, :type, Station]
+    ]
+  end
+
+  def history
+    @history ||= {}
   end
 
   def add_station(station)

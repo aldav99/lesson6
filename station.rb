@@ -5,7 +5,7 @@ require_relative 'acessors'
 class Station
   include InstanceCounter
   include Validation
-  include Acessors
+  extend Acessors
 
   NAME_FORMAT = /^[А-Я]{1}[а-я]*$/
 
@@ -17,15 +17,25 @@ class Station
     stations
   end
 
+  def history
+    @history ||= {}
+  end
+
   attr_reader :name, :trains
 
   def initialize(name)
     @name = name
     @trains = []
-    validate! :name, :presence
-    validate! :name, :format, NAME_FORMAT 
+    validate! 
     Station.stations << self
     register_instance
+  end
+
+  def prove
+    [
+    [:name, :presence],
+    [:name, :format, NAME_FORMAT]
+    ]
   end
 
   def each_train

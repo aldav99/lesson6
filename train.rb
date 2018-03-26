@@ -8,7 +8,7 @@ require_relative 'acessors'
 class Train
   include InstanceCounter
   include Validation
-  include Acessors
+  extend Acessors
 
   def self.trains
     @trains ||= {}
@@ -26,17 +26,27 @@ class Train
 
   def initialize(name, type, number, wagons = [], route = [])
     @name = name
-    validate! :name, :presence
-    validate! :name, :format, NAME_FORMAT
     @type = type
     @wagons = wagons
     @speed = 0
     @route = route
     @number = number
-    validate! :number, :presence
-    validate! :number, :format, NUMBER_FORMAT
+    validate! 
     Train.trains[number] = self
     register_instance
+  end
+
+  def prove
+    [
+    [:name, :presence],
+    [:name, :format, NAME_FORMAT],
+    [:number, :presence],
+    [:number, :format, NUMBER_FORMAT]
+    ]
+  end
+
+  def history
+    @history ||= {}
   end
 
   def each_wagon
