@@ -17,10 +17,6 @@ class Station
     stations
   end
 
-  def history
-    @history ||= {}
-  end
-
   attr_reader :name, :trains
 
   def initialize(name)
@@ -31,13 +27,9 @@ class Station
     register_instance
   end
 
-  def prove
-    [
-    [:name, :presence],
-    [:name, :format, NAME_FORMAT]
-    ]
-  end
-
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
+  
   def each_train
     @trains.each do |train|
       yield train

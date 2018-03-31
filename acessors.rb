@@ -1,4 +1,14 @@
 module Acessors
+
+  def self.extended(klass)
+    klass.include InstanceMethods
+  end
+
+  module InstanceMethods
+    def history
+      @history ||= {}
+    end
+  end
    
   def attr_accessor_with_history(*methods)
     methods.each do |method|

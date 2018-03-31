@@ -18,18 +18,11 @@ class Route
     register_instance
   end
 
-  def prove
-    [
-    [:start, :presence],
-    [:terminate, :presence],
-    [:start, :type, Station],
-    [:terminate, :type, Station]
-    ]
-  end
-
-  def history
-    @history ||= {}
-  end
+  validate :start, :presence
+  validate :terminate, :presence
+  validate :start, :type, Station
+  validate :terminate, :type, Station
+  
 
   def add_station(station)
     @stations.insert(-2, station)

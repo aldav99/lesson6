@@ -36,18 +36,10 @@ class Train
     register_instance
   end
 
-  def prove
-    [
-    [:name, :presence],
-    [:name, :format, NAME_FORMAT],
-    [:number, :presence],
-    [:number, :format, NUMBER_FORMAT]
-    ]
-  end
-
-  def history
-    @history ||= {}
-  end
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
 
   def each_wagon
     @wagons.each do |wagon|
@@ -117,3 +109,4 @@ class Train
     @route.stations[@index_location + 1]
   end
 end
+
